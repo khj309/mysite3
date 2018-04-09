@@ -13,7 +13,7 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
 var isEnd = false;
-var messageBox = function( title, message ) {
+var messageBox = function( title, message, callback ) {
 	$( "#dialog-message" ).attr( "title", title );
 	$( "#dialog-message p" ).text( message );
 	
@@ -23,7 +23,8 @@ var messageBox = function( title, message ) {
 			 "확인": function() {
 				$( this ).dialog( "close" );
 			}
-		}
+		},
+		close: callback || function(){}
 	});	
 }
 
@@ -45,13 +46,62 @@ var render = function( mode, vo ){
 }
 
 $(function(){
+	// 삭제 시 비밀번호 입력 모달 다이알로그
+	var deleteDialog = $( "#dialog-delete-form" ).dialog({
+      autoOpen: false,
+      modal: true,
+      buttons: {
+		"삭제": function(){
+			var password = $("#password-delete").val();
+			var no = $("#hidden-no").val();
+			
+			console.log( password + ":" + no );
+			
+			// ajax 통신
+			$.ajax({
+				url: "/mysite3/api/guestbook/delete",
+				type: "post",
+				dataType: "json",
+				data:"no=" + no + "&password=" + password,
+				success: function(response){
+					if( response.result == "fail" ) {
+						console.log( response.message );
+						return;
+					}
+					
+					if( response.data == -1 ) {
+						$(".validateTips.normal").hide();
+						$(".validateTips.error").show();
+						$("#password-delete").val("");
+						return;
+					}
+					
+					$("#list-guestbook li[data-no=" + response.data + "]").remove();
+					deleteDialog.dialog( "close" );
+				}
+			});
+		},
+        "취소": function() {
+        	deleteDialog.dialog( "close" );
+        }
+      },
+      close: function() {
+			$("#password-delete").val( "" );
+			$("#hidden-no").val( "" );
+			$(".validateTips.normal").show();
+			$(".validateTips.error").hide();
+			
+      }
+    });
+ 	
 	
 	//Live Event Listener
 	$(document).on( "click", "#list-guestbook li a", function(event){
 		event.preventDefault();
-		
+
 		var no = $(this).data("no");
-		console.log( no );
+		$( "#hidden-no" ).val( no );
+		deleteDialog.dialog( "open" );
 	});
 	
 	$("#add-form").submit( function(event){
@@ -77,20 +127,31 @@ $(function(){
 		});
 		
 		if( data["name"] == '' ) {
-			messageBox("메세지 등록", "이름이 비어 있습니다.");
-			$("#input-name").focus();
+			messageBox(
+				"메세지 등록",
+				"이름이 비어 있습니다.", function(){
+					$("#input-name").focus();		
+				});
 			return;
 		}
 
 		if( data["password"] == '' ) {
-			messageBox("메세지 등록", "비밀번호가 비어 있습니다." );
-			$("#input-password").focus();
+			messageBox(
+				"메세지 등록", 
+				"비밀번호가 비어 있습니다.",
+				function(){
+					$("#input-password").focus();		
+				});
+			
 			return;
 		}
 
 		if( data["content"] == '' ) {
-			messageBox("메세지 등록", "내용이 비어 있습니다." );
-			$("#tx-content").focus();
+			messageBox(
+				"메세지 등록",
+				"내용이 비어 있습니다.", function(){
+					$("#tx-content").focus();		
+				} );
 			return;
 		}
 		

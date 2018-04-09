@@ -44,14 +44,16 @@
 		]]>		
 	</select>	
 	
-	<delete id="delete" parameterType="map">
+	<delete id="delete" parameterType="guestbookvo">
 		<![CDATA[
 		delete
 		  from guestbook 
 		 where no=#{no }
-		   and password=#{pwd }
+		   and password=#{password }
 		]]>	
 	</delete>
+	
+	
 	
 	<insert id="insert" parameterType="guestbookvo">
 		<![CDATA[
