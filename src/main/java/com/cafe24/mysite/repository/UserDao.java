@@ -1,12 +1,5 @@
 package com.cafe24.mysite.repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -29,16 +22,14 @@ public class UserDao {
 	
 	public UserVo get(UserVo vo) throws UserDaoException {
 		return sqlSession.
-				selectOne("user.getByEmailAndPassword", vo);
+				selectOne( "user.getByEmailAndPassword", vo );
 	}
 	
-	public boolean insert(UserVo vo) {
-		int count = sqlSession.insert( "user.insert", vo );
-		return count == 1;
+	public int insert(UserVo vo) {
+		return sqlSession.insert( "user.insert", vo );
 	}
 	
-	public boolean update(UserVo vo) {
-		int count = sqlSession.update( "user.update", vo );
-		return count == 1;
+	public int update(UserVo vo) {
+		return sqlSession.update( "user.update", vo );
 	}
 }
