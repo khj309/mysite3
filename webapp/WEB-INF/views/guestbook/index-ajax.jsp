@@ -10,9 +10,22 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath }/assets/css/guestbook-ajax.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script type="text/javascript" src="${pageContext.request.contextPath }/assets/js/jquery/jquery-1.9.0.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath }/assets/js/ejs/ejs.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
+// jQuery plugin
+(function($){
+	$.fn.hello = function(){
+		var $element = $(this);  
+		console.log( $element.attr("id") + ":hello~" );
+	}
+})(jQuery);
+
 var isEnd = false;
+var ejsListItem = new EJS({
+	url: "${pageContext.request.contextPath }/assets/js/ejs/template/listitem.ejs"
+}); 
+	
 var messageBox = function( title, message, callback ) {
 	$( "#dialog-message" ).attr( "title", title );
 	$( "#dialog-message p" ).text( message );
@@ -29,20 +42,51 @@ var messageBox = function( title, message, callback ) {
 }
 
 var render = function( mode, vo ){
-	var html = 
+	var html = ejsListItem.render( vo );
+/*		
 		"<li data-no='" + vo.no + "'>" +
 		"<strong>" + vo.name + "</strong>" +
 		"<p>" + vo.content.replace(/\n/gi, "<br>") +  "</p>" +
 		"<strong></strong>" +
 		"<a href='#' data-no='" + vo.no + "'>삭제</a>" + 
 		"</li>";
-		
+*/		
 	if( mode == true ) {
 		$("#list-guestbook").prepend( html );
 	} else {
 		$("#list-guestbook").append( html );
 	}
 	//$("#list-guestbook")[ mode ? "prepend" : "append" ](html);
+}
+
+var fetchList = function(){
+	if( isEnd == true ) {
+		return;
+	}
+	var startNo = $( "#list-guestbook li" ).last().data("no") || 0;
+	$.ajax({
+		url:"/mysite3/api/guestbook/list?no=" + startNo,
+		type: "get",
+		dataType: "json",
+		success: function(response){
+			// 성공유무
+			if( response.result != "success" ) {
+				console.log( response.message );
+				return;
+			}
+			
+			// 끝 감지
+			if( response.data.length < 5 ) {
+				isEnd = true;
+				$( "#btn-fetch" ).prop( "disabled", true );
+			}
+			
+			// render
+			$.each( response.data, function( index, vo ){
+				render( false, vo );
+			});
+		}
+	});	
 }
 
 $(function(){
@@ -90,7 +134,6 @@ $(function(){
 			$("#hidden-no").val( "" );
 			$(".validateTips.normal").show();
 			$(".validateTips.error").hide();
-			
       }
     });
  	
@@ -170,34 +213,27 @@ $(function(){
 	});
 	
 	$("#btn-fetch").click(function(){
-		if( isEnd == true ) {
-			return;
-		}
-		var startNo = $( "#list-guestbook li" ).last().data("no") || 0;
-		$.ajax({
-			url:"/mysite3/api/guestbook/list?no=" + startNo,
-			type: "get",
-			dataType: "json",
-			success: function(response){
-				// 성공유무
-				if( response.result != "success" ) {
-					console.log( response.message );
-					return;
-				}
-				
-				// 끝 감지
-				if( response.data.length < 5 ) {
-					isEnd = true;
-					$( "#btn-fetch" ).prop( "disabled", true );
-				}
-				
-				// render
-				$.each( response.data, function( index, vo ){
-					render( false, vo );
-				});
-			}
-		});
+		fetchList();
 	});	
+	
+	$( window ).scroll( function(){
+		var $window = $(this);
+		var scrollTop = $window.scrollTop();
+		var windowHeight = $window.height();
+		var documentHeight = $( document ).height();
+
+		//console.log( scrollTop + ":" + windowHeight + ":" + documentHeight );
+		// scrollbar의 thumb가 바닥 전 30px까지 도달
+		if( scrollTop + windowHeight + 30 > documentHeight ) {
+			fetchList();	
+		}
+	});
+	
+	// 최초 리스트 가져오기
+	fetchList();
+	
+	// plugin 테스트
+	$( "#container" ).hello();
 });
 </script>
 </head>
