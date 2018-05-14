@@ -1,21 +1,25 @@
 package com.cafe24.mysite.vo;
 
+import java.util.List;
+
 public class BoardVo {
-	private Long no;
+	private long no;
 	private String title;
 	private String content;
 	private String regDate;
-	private Integer hit;
-	private Integer groupNo;
-	private Integer orderNo;
-	private Integer depth;
-	private Long userNo;
-	private String userName;
+	private int groupNo;
+	private int orderNo;
+	private int depth;
+	private long userNo;
+	private long viewCnt;
+	private String writer;
+	private List<CommentVo> comment;
+	private String status;
 	
-	public Long getNo() {
+	public long getNo() {
 		return no;
 	}
-	public void setNo(Long no) {
+	public void setNo(long no) {
 		this.no = no;
 	}
 	public String getTitle() {
@@ -36,47 +40,58 @@ public class BoardVo {
 	public void setRegDate(String regDate) {
 		this.regDate = regDate;
 	}
-	public Integer getHit() {
-		return hit;
-	}
-	public void setHit(Integer hit) {
-		this.hit = hit;
-	}
-	public Integer getGroupNo() {
+	public int getGroupNo() {
 		return groupNo;
 	}
-	public void setGroupNo(Integer groupNo) {
+	public void setGroupNo(int groupNo) {
 		this.groupNo = groupNo;
 	}
-	public Integer getOrderNo() {
+	public int getOrderNo() {
 		return orderNo;
 	}
-	public void setOrderNo(Integer orderNo) {
+	public void setOrderNo(int orderNo) {
 		this.orderNo = orderNo;
 	}
-	public Integer getDepth() {
+	public int getDepth() {
 		return depth;
 	}
-	public void setDepth(Integer depth) {
+	public void setDepth(int depth) {
 		this.depth = depth;
 	}
-	public Long getUserNo() {
+	public long getUserNo() {
 		return userNo;
 	}
-	public void setUserNo(Long userNo) {
+	public void setUserNo(long userNo) {
 		this.userNo = userNo;
 	}
-	public String getUserName() {
-		return userName;
+	public long getViewCnt() {
+		return viewCnt;
 	}
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setViewCnt(long viewCnt) {
+		this.viewCnt = viewCnt;
 	}
-	
+	public String getWriter() {
+		return writer;
+	}
+	public void setWriter(String writer) {
+		this.writer = writer;
+	}
+	public List<CommentVo> getComment() {
+		return comment;
+	}
+	public void setComment(List<CommentVo> comment) {
+		this.comment = comment;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
 	@Override
 	public String toString() {
-		return "BoardVo [no=" + no + ", title=" + title + ", content=" + content + ", regDate=" + regDate + ", hit="
-				+ hit + ", groupNo=" + groupNo + ", orderNo=" + orderNo + ", depth=" + depth + ", userNo=" + userNo
-				+ ", userName=" + userName + "]";
+		return "BoardVo [no=" + no + ", title=" + title + ", content=" + content + ", regDate=" + regDate + ", groupNo="
+				+ groupNo + ", orderNo=" + orderNo + ", depth=" + depth + ", userNo=" + userNo + ", viewCnt=" + viewCnt
+				+ ", writer=" + writer + ", status=" + status + "]";
 	}
 }

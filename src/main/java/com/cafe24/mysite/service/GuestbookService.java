@@ -9,38 +9,29 @@ import com.cafe24.mysite.repository.GuestbookDao;
 import com.cafe24.mysite.vo.GuestbookVo;
 
 @Service
-public class GuestbookService {
+public class GuestbookService{
 	@Autowired
-	private GuestbookDao guestbookDao;
+	private GuestbookDao gbDao;
 
-	public List<GuestbookVo> getMessageList(Long no){
-		List<GuestbookVo> list = guestbookDao.getList(no);
-		return list;
+	public List<GuestbookVo> getList() {
+		return gbDao.getList();
 	}
 	
-	public List<GuestbookVo> getMessageList(){
-		List<GuestbookVo> list = guestbookDao.getList();
-		return list;
+	public List<GuestbookVo> getListByLastNo(long lastNo) {
+		return gbDao.getList(lastNo);
+	}
+
+	public boolean insertGuestbook(GuestbookVo vo) {
+		return gbDao.insertGuestbook(vo);
 	}
 	
-	public boolean insertMessage( GuestbookVo guestbookVo ) {
-		int count = guestbookDao.insert(guestbookVo);
-		return count == 1;
+	public GuestbookVo insertGuestbook2(GuestbookVo vo) {
+		return gbDao.insertGuestbook2(vo);
 	}
+
 	
-	public GuestbookVo insertMessage2( GuestbookVo guestbookVo ) {
-		GuestbookVo vo = null;
-		
-		int count = guestbookDao.insert(guestbookVo);
-		if( count == 1 ) {
-			vo = guestbookDao.get( guestbookVo.getNo() );
-		}
-		
-		return vo;
-	}	
-	
-	public boolean deleteMessage( GuestbookVo guestbookVo ) {
-		int count = guestbookDao.delete(guestbookVo);
-		return count == 1;
+	public boolean deleteByNoAndPassword(Long no, String password) {
+		return gbDao.deleteGuestbook(no, password);
 	}
+
 }

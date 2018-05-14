@@ -45,7 +45,9 @@ $(function(){
 </head>
 <body>
 	<div id="container">
-		<c:import url="/WEB-INF/views/includes/header.jsp" />
+			<!--헤더 시작 -->
+		<c:import url="/WEB-INF/views/includes/header.jsp"></c:import>
+		<!--헤더 끝 -->
 		<div id="content">
 			<div id="gallery">
 				<div>
@@ -66,7 +68,7 @@ $(function(){
 						
 						
 						<li>
-							<a	href="${pageContext.request.contextPath }/assets/gallery-examples/im2.jpg'"
+							<a	href="${pageContext.request.contextPath }/assets/gallery-examples/im2.jpg"
 								data-lightbox="gallery"
 								class="image"
 								style="background-image:url('${pageContext.request.contextPath }/assets/gallery-examples/im2.jpg')">&nbsp;</a>
@@ -235,10 +237,17 @@ $(function(){
   				</form>
 			</div>
 		</div>
+		
+		<!--네비게이션 시작 -->
 		<c:import url="/WEB-INF/views/includes/navigation.jsp">
-			<c:param name="menu" value="gallery"/>
+			<c:param name="menu" value="gallery"></c:param>
 		</c:import>
-		<c:import url="/WEB-INF/views/includes/footer.jsp" />
+		<!--네비게이션 끝 -->
+		
+		<!--풋터 시작 -->
+		<c:import url="/WEB-INF/views/includes/footer.jsp"></c:import>
+		<!--풋터 끝 -->
+		
 	</div>
 </body>
 </html>

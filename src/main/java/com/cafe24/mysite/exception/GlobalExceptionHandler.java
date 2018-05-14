@@ -6,6 +6,8 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -14,34 +16,35 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-	
-	@ExceptionHandler( Exception.class )
+	private static final Log LOG = LogFactory.getLog(GlobalExceptionHandler.class);
+	@ExceptionHandler(Exception.class)
 	public void handlerException(
-		HttpServletRequest request,
-		HttpServletResponse response,
-		Exception e) throws Exception {
-	
+			HttpServletRequest request,
+			HttpServletResponse response,
+			Exception e) throws Exception {
+		
 		//1. 로깅
 		StringWriter errors = new StringWriter();
-		e.printStackTrace( new PrintWriter(errors) );
+		e.printStackTrace(new PrintWriter(errors));
+		LOG.error(errors.toString());
 		
-		e.printStackTrace();
+		//e.printStackTrace();
 		
-		String accept = request.getHeader( "accept" );
-		if( accept.matches(".*application/json.*") ) {
-			//2. 실패 JSON 응답
-			JSONResult jsonResult = JSONResult.fail(errors.toString());
-			
-			String json = new ObjectMapper().writeValueAsString( jsonResult );
-			response.setContentType( "application/json; charset=utf-8" );
+		
+		request.setAttribute("errors", errors.toString());
+		//2. 사과 응답
+		String acceptHeader=request.getHeader("accept");
+		if(acceptHeader.matches(".*application/json.*")) {
+			//실패 json 응답
+			LOG.debug("실패 json 응답");
+			JSONResult result = JSONResult.fail(errors.toString());
+			String json =new ObjectMapper().writeValueAsString(result);
+			response.setContentType("application/json; charset=utf-8;");
 			response.getWriter().print(json);
-			
-		} else {
-			//2. 사과 페이지
-			request.
-			getRequestDispatcher( "/WEB-INF/views/error/error.jsp" ).
-			forward( request, response );
+			return;
+		}else {
+			//실패 사과 페이지 응답
+			request.getRequestDispatcher("/WEB-INF/views/error/error.jsp").forward(request, response);
 		}
-		
 	}
 }

@@ -1,41 +1,47 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%
-	String result = (String)request.getAttribute( "result" );
-	String email = (String)request.getAttribute( "email" );
-%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <!doctype html>
 <html>
 <head>
 <title>mysite</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<link href="${pageContext.servletContext.contextPath }/assets/css/user.css" rel="stylesheet" type="text/css">
+<link href="${pageContext.servletContext.contextPath}/assets/css/user.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 	<div id="container">
-		<jsp:include page="/WEB-INF/views/includes/header.jsp" />
+		
+		<!--헤더 시작 -->
+		<c:import url="/WEB-INF/views/includes/header.jsp"></c:import>
+		<!--헤더 끝 -->
+		
 		<div id="content">
 			<div id="user">
-				<form id="login-form" name="loginform" method="post" action="${pageContext.servletContext.contextPath }/user/auth">
+				<form id="login-form" name="loginform" method="post" action="${pageContext.servletContext.contextPath}/user/auth">
 					<label class="block-label" for="email">이메일</label>
-					<input id="email" name="email" type="text" value="<%=(email == null ? "" : email) %>">
+					<input id="email" name="email" type="text" value="${email}">
 					<label class="block-label" >패스워드</label>
 					<input name="password" type="password" value="">
-					<%
-						if("fail".equals(result)){
-					%>
-						<p>
-							로그인이 실패 했습니다.
-						</p>
-					<%
-						}
-					%>
-					
+					<c:if test='${result == "fail"}'>
+					<p>
+						로그인이 실패 했습니다.
+					</p>
+					</c:if>
 					<input type="submit" value="로그인">
 				</form>
 			</div>
 		</div>
-		<jsp:include page="/WEB-INF/views/includes/navigation.jsp"/>
-		<jsp:include page="/WEB-INF/views/includes/footer.jsp"/>
+			
+		<!--네비게이션 시작 -->
+		<c:import url="/WEB-INF/views/includes/navigation.jsp">
+		</c:import>
+		<!--네비게이션 끝 -->
+		
+		<!--풋터 시작 -->
+		<c:import url="/WEB-INF/views/includes/footer.jsp"></c:import>
+		<!--풋터 끝 -->
+		
 	</div>
 </body>
 </html>

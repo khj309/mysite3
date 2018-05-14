@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="comment">
+	
+	<select id="getComment" resultType="commentvo" parameterType="long">
+	<![CDATA[
+	SELECT a.no,
+		   a.content,
+		   a.reg_date,
+		   a.user_no,
+		   a.board_no,
+		   b.name as 'userName'
+		   FROM   comment a,
+		   users b
+		   WHERE  a.user_no = b.no
+		   		 AND  a.no = ${no}
+	]]>
+	</select>
+	
+	<select id="getList" resultType="commentvo" parameterType="long">
+	<![CDATA[
+	SELECT a.no, 
+		   a.content, 
+		   a.reg_date,
+		   a.user_no,
+		   a.board_no,
+		   b.name as 'userName'
+	FROM   comment a,
+		   users b
+    WHERE  a.user_no = b.no
+    AND  a.board_no =  #{boardNo}
+    ORDER  BY a.no ASC 
+	]]>
+	</select>
+	
+	<insert id ="insert" parameterType="commentvo" >
+		<![CDATA[
+		INSERT INTO comment 
+					(content,
+					reg_date,
+					board_no,
+					user_no)
+					VALUES (#{content},
+							now(),
+							#{boardNo},
+							#{userNo})
+		]]>
+	</insert>
+	
+	
+	<delete id="delete" parameterType="long">
+	<![CDATA[
+		DELETE FROM comment WHERE  no = #{no}
+	]]>
+	</delete>
+</mapper>

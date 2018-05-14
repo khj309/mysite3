@@ -1,40 +1,67 @@
 package com.cafe24.mysite.repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.cafe24.mysite.vo.GuestbookVo;
-
 @Repository
-public class GuestbookDao {
+public class GuestbookDao extends ObjectDao{
 
-	@Autowired
-	private SqlSession sqlSession;
-	
-	public GuestbookVo get( Long no ) {
-		return sqlSession.selectOne( "guestbook.getByNo", no );
+	public GuestbookVo getGuestbook(long no){
+		return sqlSession.selectOne("guestbook.getGuestbookByNo", no);
 	}
 	
-	public int delete( GuestbookVo vo ) {
-		int count = sqlSession.delete("guestbook.delete", vo);
-		return count;		
+	public List<GuestbookVo> getList(){
+		return sqlSession.selectList("guestbook.getList", 0);
 	}
 	
-	public int insert(GuestbookVo vo) {
-		int count = sqlSession.insert( "guestbook.insert", vo );
-		return count;
+	public List<GuestbookVo> getList(long lastNo){
+		return sqlSession.selectList("guestbook.getList", lastNo);
 	}
 
-	public List<GuestbookVo> getList() {
-		List<GuestbookVo> list = sqlSession.selectList("guestbook.getList");
-		return list;
+	public boolean insertGuestbook(GuestbookVo vo) {
+		boolean result = false;
+		int count= sqlSession.insert("guestbook.insert", vo);
+		if(count == 0) {
+			System.out.println("실패");
+		}else {
+			result = true;
+			System.out.println("성공");
+		}
+		return result;
 	}
 	
-	public List<GuestbookVo> getList(Long no) {
-		List<GuestbookVo> list = sqlSession.selectList("guestbook.getList2", no);
-		return list;
+	public GuestbookVo insertGuestbook2(GuestbookVo vo) {
+		boolean result = false;
+		GuestbookVo addedVo = null;
+		int count= sqlSession.insert("guestbook.insert", vo);
+		if(count == 0) {
+			System.out.println("실패");
+		}else {
+			result = true;
+			System.out.println("성공");
+			addedVo = getGuestbook(vo.getNo());
+		}
+		return addedVo;
+	}
+
+	public boolean deleteGuestbook(long no, String password) {
+		boolean result= false;
+		Map<String, Object> param = new HashMap<>();
+		param.put("no", no);
+		param.put("password", password);
+		System.out.println("맵"+param);
+		int count = sqlSession.delete("guestbook.delete", param);
+
+		if(count == 0) {
+			System.out.println("실패");
+		}else {
+			result = true;
+			System.out.println("성공");
+		}
+		return result;
 	}	
 }

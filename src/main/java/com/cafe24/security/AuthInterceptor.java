@@ -9,44 +9,42 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.cafe24.mysite.vo.UserVo;
 
-public class AuthInterceptor extends HandlerInterceptorAdapter {
-
+public class AuthInterceptor extends HandlerInterceptorAdapter{
 	@Override
 	public boolean preHandle(
-		HttpServletRequest request,
-		HttpServletResponse response,
-		Object handler)
+			HttpServletRequest request, 
+			HttpServletResponse response, 
+			Object handler)
 			throws Exception {
-		//1. handler 종류 확인
-		if( handler instanceof HandlerMethod == false ) {
+		//1. 핸들러 종류 확인
+		if(handler instanceof HandlerMethod == false) {
 			return true;
 		}
 		
 		//2. casting
-		HandlerMethod handlerMethod = (HandlerMethod)handler; 
+		HandlerMethod handlerMethod = (HandlerMethod) handler;
 		
-		//3. @Auth 받아오기.
-		Auth auth = handlerMethod.getMethodAnnotation( Auth.class );
-
-		//4. Method에 @Auth가 없는 경우
-		if( auth == null ) {
+		//3. @Auth 받아오기
+		Auth auth = handlerMethod.getMethodAnnotation(Auth.class);
+		//auth.role();
+		//4. Method의 @Auth가 없는 경우
+		if(auth == null) {
 			return true;
 		}
 		
-		//5. @Auth 가 붙어 있는 경우, 인증여부 체크
+		//5. @Auth가 붙어있는 경우, 인증여부 체크
 		HttpSession session = request.getSession();
-		if( session == null ) {
-			response.sendRedirect( request.getContextPath() + "/user/login" );
+		if(session == null) {
+			response.sendRedirect(request.getContextPath()+"/user/login");
 			return false;
 		}
 		
-		UserVo authUser = (UserVo)session.getAttribute( "authUser" );
-		if( authUser == null ) {
-			response.sendRedirect( request.getContextPath() + "/user/login" );
+		UserVo user = (UserVo) session.getAttribute("authUser");
+		if(user == null) {
+			response.sendRedirect(request.getContextPath()+"/user/login");
 			return false;
 		}
 		
-		//6. 접근 허가
 		return true;
 	}
 }

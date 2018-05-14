@@ -12,43 +12,37 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.cafe24.mysite.vo.UserVo;
 
-public class AuthUserHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
+public class AuthUserHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver{
 
 	@Override
-	public Object resolveArgument(
-		MethodParameter parameter,
-		ModelAndViewContainer mavContainer,
-		NativeWebRequest webRequest,
-		WebDataBinderFactory binderFactory) throws Exception {
+	public Object resolveArgument(MethodParameter parameters, ModelAndViewContainer mavContainer, NativeWebRequest webRequest,
+			WebDataBinderFactory binderFactory) throws Exception {
 		
-		if( supportsParameter( parameter ) == false ) {
+		if(supportsParameter(parameters)==false) {
 			return WebArgumentResolver.UNRESOLVED;
 		}
 		
-		// @AuthUser가 붙어 있고 파라미터 타입이 UserVo
-		HttpServletRequest request = 
-			webRequest.getNativeRequest( HttpServletRequest.class );
-		
+		//@AuthUser가 붙어 있고 Type이 UserVo이다.
+		HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
 		HttpSession session = request.getSession();
-		if( session == null ) {
+		if(session == null) {
 			return null;
 		}
 		
-		return session.getAttribute( "authUser" );
+		return session.getAttribute("authUser");
 	}
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
-		//1. @AuthUser 가 붙어 있는지 확인
-		AuthUser authUser = 
-			parameter.getParameterAnnotation( AuthUser.class );
+		//1. @AuthUser가 붙어 있는지 확인
+		AuthUser authUser = parameter.getParameterAnnotation(AuthUser.class);
 		
-		//2. @AuthUser 가 안 붙어 있음
-		if( authUser == null ) {
+		//2. @AuthUser가 안 붙어 있음
+		if(authUser == null) {
 			return false;
 		}
 		
-		//3. Type이 UserVo가 아님
+		//3. @AuthUser가 붙어 있고, Type 쳌
 		if(parameter.getParameterType().equals(UserVo.class) == false) {
 			return false;
 		}
